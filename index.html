@@ -1,9 +1,17 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
+    <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="manifest" href="./manifest.json">
+    <meta name="theme-color" content="#6366f1">
+    <link rel="apple-touch-icon" href="./icons/icon-192x192.png">
+    <title>📊 داشبورد پیشروی دروس</title>
+
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>📊 داشبورد پیشروی دروس - V 1.3.0</title>
+    <title>📊 داشبورد پیشروی دروس - V 1.4.1</title>
 
     <!-- =============================================
          🎨 FONTS - فونت وزیرمتن برای نمایش فارسی
@@ -1222,7 +1230,7 @@
 
         <!-- واترمارک -->
         <div class="watermark">
-            ساخته شده با ❤️ برای موفقیت تحصیلی | داشبورد پیشروی دروس V1.3.0
+            ساخته شده با ❤️ برای موفقیت تحصیلی | داشبورد پیشروی دروس V1.4.1
         </div>
 
         <!-- ======================== -->
@@ -1760,6 +1768,15 @@
             loadFromStorage();
             renderLessons();
         })();
+
+            <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./sw.js');
+    }
+    </script>
+  </body>
+</html>
+
     </script>
 </body>
 </html>
