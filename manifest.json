@@ -1,41 +1,35 @@
 {
   "name": "داشبورد پیشروی دروس",
   "short_name": "پیشروی دروس",
-  "description": "گزارش مطالعه و پیشرفت تحصیلی - داشبورد پیشروی دروس",
+  "description": "داشبورد گزارش مطالعه و پیشرفت تحصیلی V1.3.0",
   "start_url": "./index.html",
+  "id": "./index.html",
   "display": "standalone",
-  "orientation": "portrait-primary",
   "background_color": "#0f172a",
   "theme_color": "#6366f1",
   "lang": "fa",
   "dir": "rtl",
+  "orientation": "any",
   "scope": "./",
   "categories": ["education", "productivity"],
   "icons": [
-
     {
-      "src": "icons/icon-192.png",
+      "src": "./icons/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
-      "src": "icons/icon-512.png",
+      "src": "./icons/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
-    }
-  ],
-
-
-    }
-  ],
-
-        }
-      ]
+      "purpose": "any"
+    },
+    {
+      "src": "./icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ]
 }
-
-
-
