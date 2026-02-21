@@ -1,0 +1,1765 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>📊 داشبورد پیشروی دروس - V 1.3.0</title>
+
+    <!-- =============================================
+         🎨 FONTS - فونت وزیرمتن برای نمایش فارسی
+    ============================================= -->
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" />
+
+    <style>
+        /* =============================================
+           🎨 DESIGN TOKENS - متغیرهای طراحی
+           ترکیب: بنتو گرید + گلسمورفیسم + نئومورفیسم
+           تم: سفید صدفی + پاستیلی شاد
+        ============================================= */
+        :root {
+            /* رنگ‌های پایه */
+            --bg-main: #f5f0eb;
+            --bg-card: rgba(255, 255, 255, 0.55);
+            --bg-card-solid: #ffffff;
+            --glass-border: rgba(255, 255, 255, 0.6);
+            --glass-shadow: rgba(0, 0, 0, 0.06);
+
+            /* پاستیلی‌ها */
+            --pastel-pink: #f8c8dc;
+            --pastel-blue: #b8d4e3;
+            --pastel-green: #b8e6c8;
+            --pastel-purple: #d4b8e3;
+            --pastel-orange: #f5d3a8;
+            --pastel-mint: #a8e6cf;
+            --pastel-lavender: #c3b1e1;
+            --pastel-yellow: #f9e79f;
+
+            /* رنگ‌های پر (نوارهای پیشرفت) */
+            --fill-pink: linear-gradient(135deg, #f093b0, #ee6b9e);
+            --fill-blue: linear-gradient(135deg, #74b9ff, #0984e3);
+            --fill-green: linear-gradient(135deg, #6dd5a0, #00b894);
+            --fill-purple: linear-gradient(135deg, #a29bfe, #6c5ce7);
+            --fill-orange: linear-gradient(135deg, #fdcb6e, #e17055);
+            --fill-mint: linear-gradient(135deg, #81ecec, #00cec9);
+            --fill-lavender: linear-gradient(135deg, #dfe6e9, #b2bec3);
+            --fill-yellow: linear-gradient(135deg, #ffeaa7, #fdcb6e);
+
+            /* متن */
+            --text-primary: #2d3436;
+            --text-secondary: #636e72;
+            --text-hint: #b2bec3;
+
+            /* نئومورفیسم */
+            --neo-light: #ffffff;
+            --neo-dark: rgba(174, 174, 192, 0.35);
+
+            /* فونت */
+            --font-main: 'Vazirmatn', 'Segoe UI', Tahoma, sans-serif;
+
+            /* سایز و فاصله */
+            --radius-lg: 24px;
+            --radius-md: 16px;
+            --radius-sm: 12px;
+        }
+
+        /* =============================================
+           🔄 RESET & BASE
+        ============================================= */
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-main);
+            background: var(--bg-main);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.7;
+            padding: 20px;
+            /* بکگراند الگوی ظریف */
+            background-image:
+                radial-gradient(circle at 20% 50%, rgba(248, 200, 220, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(184, 212, 227, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 50% 80%, rgba(184, 230, 200, 0.15) 0%, transparent 50%);
+        }
+
+        /* =============================================
+           📦 DASHBOARD - بنتو گرید اصلی
+        ============================================= */
+        .dashboard {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px;
+        }
+
+        /* =============================================
+           🪟 GLASSMORPHISM CARD - کارت شیشه‌ای پایه
+        ============================================= */
+        .glass-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1.5px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            box-shadow:
+                8px 8px 20px var(--neo-dark),
+                -6px -6px 16px var(--neo-light),
+                0 4px 30px var(--glass-shadow);
+        }
+
+        /* =============================================
+           🏷️ HEADER - بخش بالای داشبورد
+        ============================================= */
+        .header {
+            grid-column: 1 / -1;
+            padding: 28px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            background: var(--bg-card);
+            backdrop-filter: blur(16px);
+            border: 1.5px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            box-shadow:
+                8px 8px 20px var(--neo-dark),
+                -6px -6px 16px var(--neo-light);
+        }
+
+        .header-right h1 {
+            font-size: 1.8em;
+            font-weight: 900;
+            background: linear-gradient(135deg, #6c5ce7, #e17055, #00b894);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header-right p {
+            font-size: 0.92em;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        .header-left {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            align-items: flex-end;
+        }
+
+        .date-badge {
+            background: linear-gradient(135deg, var(--pastel-purple), var(--pastel-blue));
+            padding: 8px 18px;
+            border-radius: 50px;
+            font-size: 0.88em;
+            font-weight: 600;
+            color: var(--text-primary);
+            box-shadow: 0 3px 10px rgba(108, 92, 231, 0.15);
+        }
+
+        .student-name-input {
+            border: 2px dashed var(--pastel-lavender);
+            background: rgba(255, 255, 255, 0.5);
+            padding: 8px 16px;
+            border-radius: 12px;
+            font-family: var(--font-main);
+            font-size: 0.95em;
+            text-align: center;
+            width: 220px;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        .student-name-input:focus {
+            border-color: var(--pastel-purple);
+            background: rgba(255, 255, 255, 0.85);
+            box-shadow: 0 0 0 4px rgba(212, 184, 227, 0.3);
+        }
+
+        /* =============================================
+           📊 STAT CARDS - کارت‌های آماری کوچک
+        ============================================= */
+        .stat-card {
+            padding: 22px 16px;
+            text-align: center;
+            background: var(--bg-card);
+            backdrop-filter: blur(16px);
+            border: 1.5px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            box-shadow:
+                6px 6px 14px var(--neo-dark),
+                -4px -4px 10px var(--neo-light);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow:
+                8px 8px 20px var(--neo-dark),
+                -6px -6px 14px var(--neo-light);
+        }
+
+        .stat-icon {
+            font-size: 2em;
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-size: 1.9em;
+            font-weight: 900;
+            color: var(--text-primary);
+        }
+
+        .stat-label {
+            font-size: 0.82em;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        /* =============================================
+           🏆 OVERALL PROGRESS CARD - کارت پیشرفت کل
+           (بر اساس مجموع صفحات خوانده‌شده / کل صفحات)
+        ============================================= */
+        .overall-progress-card {
+            grid-column: 1 / -1;
+            padding: 28px 32px;
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1.5px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            box-shadow:
+                8px 8px 20px var(--neo-dark),
+                -6px -6px 16px var(--neo-light),
+                0 4px 30px var(--glass-shadow);
+            display: flex;
+            align-items: center;
+            gap: 28px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* شیمر زیبا در پس‌زمینه کارت */
+        .overall-progress-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 350px;
+            height: 350px;
+            background: radial-gradient(circle, rgba(108, 92, 231, 0.06) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .overall-progress-card::after {
+            content: '';
+            position: absolute;
+            bottom: -40%;
+            left: -10%;
+            width: 250px;
+            height: 250px;
+            background: radial-gradient(circle, rgba(0, 184, 148, 0.06) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        /* دایره بزرگ پیشرفت - SVG */
+        .overall-circle-wrap {
+            position: relative;
+            width: 130px;
+            height: 130px;
+            flex-shrink: 0;
+            z-index: 1;
+        }
+
+        .overall-circle-wrap svg {
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
+        }
+
+        .circle-bg {
+            fill: none;
+            stroke: rgba(0, 0, 0, 0.05);
+            stroke-width: 10;
+        }
+
+        .circle-fill {
+            fill: none;
+            stroke: url(#overallGrad);
+            stroke-width: 10;
+            stroke-linecap: round;
+            transition: stroke-dashoffset 1s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .overall-percent-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 1.65em;
+            font-weight: 900;
+            color: var(--text-primary);
+        }
+
+        /* بخش اطلاعات کنار دایره */
+        .overall-info {
+            flex: 1;
+            z-index: 1;
+        }
+
+        .overall-info h3 {
+            font-size: 1.3em;
+            font-weight: 800;
+            margin-bottom: 6px;
+            background: linear-gradient(135deg, #6c5ce7, #00b894);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .overall-info p {
+            font-size: 0.88em;
+            color: var(--text-secondary);
+            margin-bottom: 14px;
+        }
+
+        /* نوار پیشرفت خطی هم زیرش */
+        .overall-bar-bg {
+            width: 100%;
+            height: 14px;
+            border-radius: 50px;
+            background: rgba(0, 0, 0, 0.06);
+            overflow: hidden;
+            box-shadow: inset 2px 2px 5px rgba(0,0,0,0.08);
+        }
+
+        .overall-bar-fill {
+            height: 100%;
+            border-radius: 50px;
+            background: linear-gradient(135deg, #6c5ce7, #a29bfe, #00b894);
+            transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 2px 10px rgba(108, 92, 231, 0.3);
+        }
+
+        /* اعداد زیر نوار */
+        .overall-details {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .overall-detail-item {
+            background: rgba(255, 255, 255, 0.6);
+            padding: 6px 14px;
+            border-radius: 10px;
+            font-size: 0.82em;
+            color: var(--text-secondary);
+            font-weight: 600;
+            border: 1px solid rgba(255,255,255,0.8);
+            box-shadow: 2px 2px 6px var(--neo-dark), -2px -2px 4px var(--neo-light);
+        }
+
+        .overall-detail-item span {
+            color: var(--text-primary);
+            font-weight: 800;
+        }
+
+        /* =============================================
+           ➕ ADD LESSON - فرم افزودن درس
+        ============================================= */
+        .add-lesson-section {
+            grid-column: 1 / -1;
+            padding: 24px 28px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+            align-items: flex-end;
+            background: var(--bg-card);
+            backdrop-filter: blur(16px);
+            border: 1.5px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            box-shadow:
+                6px 6px 14px var(--neo-dark),
+                -4px -4px 10px var(--neo-light);
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            flex: 1;
+            min-width: 130px;
+        }
+
+        .form-group label {
+            font-size: 0.82em;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .form-group input,
+        .form-group select {
+            padding: 10px 14px;
+            border: 2px solid rgba(0, 0, 0, 0.06);
+            border-radius: var(--radius-sm);
+            font-family: var(--font-main);
+            font-size: 0.92em;
+            background: rgba(255, 255, 255, 0.7);
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            border-color: var(--pastel-purple);
+            box-shadow: 0 0 0 4px rgba(212, 184, 227, 0.25);
+            background: #fff;
+        }
+
+        .btn-add {
+            padding: 12px 28px;
+            border: none;
+            border-radius: var(--radius-sm);
+            background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+            color: white;
+            font-family: var(--font-main);
+            font-size: 0.95em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            box-shadow: 0 4px 14px rgba(108, 92, 231, 0.3);
+        }
+
+        .btn-add:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(108, 92, 231, 0.4);
+        }
+
+        .btn-add:active {
+            transform: translateY(0);
+        }
+
+        /* =============================================
+           📋 LESSONS LIST - لیست دروس
+        ============================================= */
+        .lessons-container {
+            grid-column: 1 / -1;
+        }
+
+        .lessons-title {
+            font-size: 1.15em;
+            font-weight: 700;
+            margin-bottom: 14px;
+            padding-right: 6px;
+        }
+
+        .lessons-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 16px;
+        }
+
+        /* =============================================
+           🃏 LESSON CARD - کارت هر درس
+        ============================================= */
+        .lesson-card {
+            padding: 22px;
+            background: var(--bg-card);
+            backdrop-filter: blur(14px);
+            border: 1.5px solid var(--glass-border);
+            border-radius: var(--radius-md);
+            box-shadow:
+                5px 5px 12px var(--neo-dark),
+                -3px -3px 8px var(--neo-light);
+            transition: all 0.3s ease;
+            cursor: grab;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .lesson-card:hover {
+            transform: translateY(-3px);
+            box-shadow:
+                8px 8px 18px var(--neo-dark),
+                -5px -5px 12px var(--neo-light);
+        }
+
+        .lesson-card.dragging {
+            opacity: 0.5;
+            transform: scale(0.95);
+        }
+
+        /* نوار رنگی بالای کارت */
+        .lesson-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            left: 0;
+            height: 4px;
+            border-radius: var(--radius-md) var(--radius-md) 0 0;
+        }
+
+        .lesson-card.color-pink::before { background: var(--fill-pink); }
+        .lesson-card.color-blue::before { background: var(--fill-blue); }
+        .lesson-card.color-green::before { background: var(--fill-green); }
+        .lesson-card.color-purple::before { background: var(--fill-purple); }
+        .lesson-card.color-orange::before { background: var(--fill-orange); }
+        .lesson-card.color-mint::before { background: var(--fill-mint); }
+        .lesson-card.color-lavender::before { background: var(--fill-lavender); }
+        .lesson-card.color-yellow::before { background: var(--fill-yellow); }
+
+        .lesson-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 14px;
+        }
+
+        .lesson-name {
+            font-size: 1.1em;
+            font-weight: 700;
+        }
+
+        .lesson-badge {
+            font-size: 0.72em;
+            padding: 4px 10px;
+            border-radius: 50px;
+            font-weight: 600;
+        }
+
+        .badge-general {
+            background: var(--pastel-blue);
+            color: #2d6a8a;
+        }
+
+        .badge-specific {
+            background: var(--pastel-pink);
+            color: #8a2d5a;
+        }
+
+        .badge-optional {
+            background: var(--pastel-green);
+            color: #2d7a4a;
+        }
+
+        /* نوار پیشرفت */
+        .progress-section {
+            margin-bottom: 12px;
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.82em;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+        }
+
+        .progress-bar-bg {
+            width: 100%;
+            height: 10px;
+            border-radius: 50px;
+            background: rgba(0, 0, 0, 0.06);
+            overflow: hidden;
+            box-shadow: inset 2px 2px 4px rgba(0, 0, 0, 0.08);
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            border-radius: 50px;
+            transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* رنگ‌بندی نوارها */
+        .fill-pink { background: var(--fill-pink); }
+        .fill-blue { background: var(--fill-blue); }
+        .fill-green { background: var(--fill-green); }
+        .fill-purple { background: var(--fill-purple); }
+        .fill-orange { background: var(--fill-orange); }
+        .fill-mint { background: var(--fill-mint); }
+        .fill-lavender { background: var(--fill-lavender); }
+        .fill-yellow { background: var(--fill-yellow); }
+
+        .lesson-details {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8em;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+        }
+
+        .lesson-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-action {
+            flex: 1;
+            padding: 8px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-family: var(--font-main);
+            font-size: 0.82em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-edit {
+            background: rgba(108, 92, 231, 0.12);
+            color: #6c5ce7;
+        }
+
+        .btn-edit:hover {
+            background: rgba(108, 92, 231, 0.22);
+        }
+
+        .btn-delete {
+            background: rgba(225, 112, 85, 0.12);
+            color: #e17055;
+        }
+
+        .btn-delete:hover {
+            background: rgba(225, 112, 85, 0.22);
+        }
+
+        /* حالت خالی */
+        .empty-state {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-hint);
+        }
+
+        .empty-state-icon {
+            font-size: 3em;
+            margin-bottom: 12px;
+        }
+
+        /* =============================================
+           📊 CHART - نمودار مقایسه‌ای
+        ============================================= */
+        .chart-section {
+            grid-column: 1 / -1;
+            padding: 28px;
+            background: var(--bg-card);
+            backdrop-filter: blur(16px);
+            border: 1.5px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            box-shadow:
+                6px 6px 14px var(--neo-dark),
+                -4px -4px 10px var(--neo-light);
+        }
+
+        .chart-title {
+            font-size: 1.1em;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .chart-wrapper {
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            gap: 18px;
+            min-height: 220px;
+            flex-wrap: wrap;
+        }
+
+        .chart-bar-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .chart-bar {
+            width: 42px;
+            min-height: 8px;
+            border-radius: 8px 8px 4px 4px;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            transition: height 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .chart-bar-value {
+            font-size: 0.72em;
+            font-weight: 700;
+            color: white;
+            margin-top: 6px;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+        }
+
+        .chart-bar-label {
+            font-size: 0.72em;
+            color: var(--text-secondary);
+            text-align: center;
+            max-width: 60px;
+            word-break: break-word;
+        }
+
+        /* =============================================
+           📝 NOTES - یادداشت مشاور
+        ============================================= */
+        .notes-section {
+            grid-column: 1 / -1;
+            padding: 24px;
+            background: var(--bg-card);
+            backdrop-filter: blur(16px);
+            border: 1.5px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            box-shadow:
+                6px 6px 14px var(--neo-dark),
+                -4px -4px 10px var(--neo-light);
+        }
+
+        .notes-title {
+            font-size: 1.05em;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .notes-textarea {
+            width: 100%;
+            min-height: 100px;
+            padding: 14px;
+            border: 2px solid rgba(0, 0, 0, 0.05);
+            border-radius: var(--radius-sm);
+            font-family: var(--font-main);
+            font-size: 0.9em;
+            resize: vertical;
+            background: rgba(255, 255, 255, 0.5);
+            outline: none;
+            transition: all 0.3s ease;
+            line-height: 1.8;
+        }
+
+        .notes-textarea:focus {
+            border-color: var(--pastel-purple);
+            box-shadow: 0 0 0 4px rgba(212, 184, 227, 0.2);
+            background: rgba(255, 255, 255, 0.85);
+        }
+
+        /* =============================================
+           🎯 GOAL - هدف هفتگی
+        ============================================= */
+        .goal-section {
+            grid-column: 1 / -1;
+            padding: 22px 28px;
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            background: linear-gradient(135deg, rgba(253, 203, 110, 0.15), rgba(225, 112, 85, 0.1));
+            backdrop-filter: blur(16px);
+            border: 1.5px solid rgba(253, 203, 110, 0.3);
+            border-radius: var(--radius-lg);
+            box-shadow:
+                6px 6px 14px var(--neo-dark),
+                -4px -4px 10px var(--neo-light);
+        }
+
+        .goal-icon {
+            font-size: 2.5em;
+        }
+
+        .goal-content {
+            flex: 1;
+        }
+
+        .goal-content h3 {
+            font-size: 1em;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .goal-input {
+            width: 100%;
+            padding: 10px 14px;
+            border: 2px dashed rgba(225, 112, 85, 0.25);
+            border-radius: var(--radius-sm);
+            font-family: var(--font-main);
+            font-size: 0.9em;
+            background: rgba(255, 255, 255, 0.5);
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .goal-input:focus {
+            border-color: var(--pastel-orange);
+            background: rgba(255, 255, 255, 0.85);
+            box-shadow: 0 0 0 4px rgba(253, 203, 110, 0.2);
+        }
+
+        /* =============================================
+           💧 WATERMARK - واترمارک
+        ============================================= */
+        .watermark {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 14px;
+            font-size: 0.78em;
+            color: var(--text-hint);
+        }
+
+        /* =============================================
+           📤 EXPORT SECTION - دکمه‌های خروجی
+        ============================================= */
+        .export-section {
+            grid-column: 1 / -1;
+            display: flex;
+            justify-content: center;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+
+        .btn-export {
+            padding: 14px 32px;
+            border: none;
+            border-radius: var(--radius-md);
+            background: linear-gradient(135deg, #00b894, #00cec9);
+            color: white;
+            font-family: var(--font-main);
+            font-size: 1em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 14px rgba(0, 184, 148, 0.3);
+        }
+
+        .btn-export:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 184, 148, 0.4);
+        }
+
+        .btn-reset {
+            padding: 14px 32px;
+            border: 2px solid rgba(225, 112, 85, 0.3);
+            border-radius: var(--radius-md);
+            background: transparent;
+            color: #e17055;
+            font-family: var(--font-main);
+            font-size: 1em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-reset:hover {
+            background: rgba(225, 112, 85, 0.08);
+            border-color: #e17055;
+        }
+
+        /* =============================================
+           ✏️ EDIT MODAL - مودال ویرایش
+        ============================================= */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(6px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: var(--bg-card-solid);
+            border-radius: var(--radius-lg);
+            padding: 32px;
+            width: 100%;
+            max-width: 480px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+        }
+
+        .modal h2 {
+            font-size: 1.3em;
+            margin-bottom: 20px;
+        }
+
+        .modal .form-group {
+            margin-bottom: 14px;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 22px;
+        }
+
+        .btn-save {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: var(--radius-sm);
+            background: linear-gradient(135deg, #00b894, #00cec9);
+            color: white;
+            font-family: var(--font-main);
+            font-size: 0.95em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-save:hover {
+            box-shadow: 0 4px 14px rgba(0, 184, 148, 0.3);
+        }
+
+        .btn-cancel {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid rgba(0, 0, 0, 0.1);
+            border-radius: var(--radius-sm);
+            background: transparent;
+            color: var(--text-secondary);
+            font-family: var(--font-main);
+            font-size: 0.95em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-cancel:hover {
+            background: rgba(0, 0, 0, 0.04);
+        }
+
+        /* =============================================
+           🔔 TOAST NOTIFICATION
+        ============================================= */
+        .toast {
+            position: fixed;
+            bottom: -80px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 14px 28px;
+            border-radius: 50px;
+            font-family: var(--font-main);
+            font-size: 0.9em;
+            font-weight: 600;
+            color: white;
+            z-index: 2000;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .toast.show {
+            bottom: 30px;
+        }
+
+        .toast.success {
+            background: linear-gradient(135deg, #00b894, #00cec9);
+        }
+
+        .toast.error {
+            background: linear-gradient(135deg, #e17055, #fd79a8);
+        }
+
+        .toast.info {
+            background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+        }
+
+        /* =============================================
+           📱 RESPONSIVE - واکنش‌گرایی
+        ============================================= */
+        @media (max-width: 768px) {
+            body {
+                padding: 12px;
+            }
+
+            .dashboard {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+            }
+
+            .header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .header-left {
+                align-items: center;
+            }
+
+            .stat-card {
+                grid-column: span 1;
+            }
+
+            .export-section {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .header-right h1 {
+                font-size: 1.4em;
+            }
+
+            /* ریسپانسیو کارت پیشرفت کل */
+            .overall-progress-card {
+                flex-direction: column;
+                text-align: center;
+                padding: 22px 20px;
+                gap: 18px;
+            }
+
+            .overall-circle-wrap {
+                width: 110px;
+                height: 110px;
+            }
+
+            .overall-details {
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+
+            .lessons-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .overall-circle-wrap {
+                width: 100px;
+                height: 100px;
+            }
+
+            .overall-percent-text {
+                font-size: 1.3em;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="dashboard" id="dashboard">
+
+        <!-- ======================== -->
+        <!-- HEADER - اطلاعات بالای صفحه -->
+        <!-- ======================== -->
+        <div class="header">
+            <div class="header-right">
+                <h1>📊 داشبورد پیشروی دروس</h1>
+                <p>گزارش مطالعه و پیشرفت تحصیلی</p>
+            </div>
+            <div class="header-left">
+                <div class="date-badge" id="currentDate">📅</div>
+                <input type="text" class="student-name-input" id="studentName" placeholder="👤 نام و نام‌خانوادگی" />
+            </div>
+        </div>
+
+        <!-- ======================== -->
+        <!-- STAT CARDS - آمار کلی -->
+        <!-- ======================== -->
+        <div class="stat-card">
+            <div class="stat-icon">📚</div>
+            <div class="stat-value" id="totalLessons">0</div>
+            <div class="stat-label">تعداد دروس</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">📈</div>
+            <div class="stat-value" id="avgProgress">0%</div>
+            <div class="stat-label">میانگین پیشرفت</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">✅</div>
+            <div class="stat-value" id="completedLessons">0</div>
+            <div class="stat-label">تکمیل شده</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">⏳</div>
+            <div class="stat-value" id="totalHours">0</div>
+            <div class="stat-label">ساعت مطالعه</div>
+        </div>
+
+        <!-- ======================== -->
+        <!-- 🏆 OVERALL PROGRESS - کارت پیشرفت کل (بر مبنای صفحات) -->
+        <!-- ======================== -->
+        <div class="overall-progress-card" id="overallCard">
+            <!-- دایره SVG -->
+            <div class="overall-circle-wrap">
+                <svg viewBox="0 0 120 120">
+                    <defs>
+                        <linearGradient id="overallGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#6c5ce7;stop-opacity:1" />
+                            <stop offset="50%" style="stop-color:#a29bfe;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#00b894;stop-opacity:1" />
+                        </linearGradient>
+                    </defs>
+                    <circle class="circle-bg" cx="60" cy="60" r="50" />
+                    <circle class="circle-fill" id="overallCircle" cx="60" cy="60" r="50"
+                        stroke-dasharray="314.16"
+                        stroke-dashoffset="314.16" />
+                </svg>
+                <div class="overall-percent-text" id="overallPercent">0%</div>
+            </div>
+
+            <!-- اطلاعات -->
+            <div class="overall-info">
+                <h3>🏆 پیشرفت کل مطالعه</h3>
+                <p>بر اساس مجموع صفحات خوانده‌شده از کل صفحات دروس</p>
+
+                <!-- نوار خطی -->
+                <div class="overall-bar-bg">
+                    <div class="overall-bar-fill" id="overallBar" style="width: 0%"></div>
+                </div>
+
+                <!-- جزییات عددی -->
+                <div class="overall-details">
+                    <div class="overall-detail-item">
+                        📄 کل صفحات: <span id="overallTotalPages">0</span>
+                    </div>
+                    <div class="overall-detail-item">
+                        ✅ خوانده‌شده: <span id="overallDonePages">0</span>
+                    </div>
+                    <div class="overall-detail-item">
+                        📖 باقی‌مانده: <span id="overallRemaining">0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ======================== -->
+        <!-- ADD LESSON - فرم افزودن (مخفی در PNG) -->
+        <!-- ======================== -->
+        <div class="add-lesson-section no-capture-toggle">
+            <div class="form-group" style="flex:2; min-width:180px;">
+                <label>📖 نام درس</label>
+                <input type="text" id="lessonName" placeholder="مثلاً: ریاضی تجربی" />
+            </div>
+            <div class="form-group">
+                <label>📂 دسته‌بندی</label>
+                <select id="lessonCategory">
+                    <option value="general">عمومی</option>
+                    <option value="specific">اختصاصی</option>
+                    <option value="optional">انتخابی</option>
+                </select>
+            </div>
+            <div class="form-group" style="flex:0.7; min-width:100px;">
+                <label>📊 پیشرفت (%)</label>
+                <input type="number" id="lessonProgress" min="0" max="100" placeholder="0" />
+            </div>
+            <div class="form-group" style="flex:0.7; min-width:100px;">
+                <label>📄 کل صفحات</label>
+                <input type="number" id="lessonTotal" min="0" placeholder="100" />
+            </div>
+            <div class="form-group" style="flex:0.7; min-width:100px;">
+                <label>✅ خوانده شده</label>
+                <input type="number" id="lessonDone" min="0" placeholder="0" />
+            </div>
+            <div class="form-group" style="flex:0.7; min-width:100px;">
+                <label>⏱️ ساعت مطالعه</label>
+                <input type="number" id="lessonHours" min="0" step="0.5" placeholder="0" />
+            </div>
+            <button class="btn-add" onclick="addLesson()">➕ افزودن درس</button>
+        </div>
+
+        <!-- ======================== -->
+        <!-- LESSONS LIST - لیست دروس -->
+        <!-- ======================== -->
+        <div class="lessons-container">
+            <div class="lessons-title">📋 لیست دروس و پیشرفت</div>
+            <div class="lessons-grid" id="lessonsGrid">
+                <div class="empty-state" id="emptyState">
+                    <div class="empty-state-icon">📭</div>
+                    <p>هنوز درسی اضافه نکردی!<br/>از فرم بالا شروع کن 😊</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ======================== -->
+        <!-- CHART - نمودار مقایسه‌ای -->
+        <!-- ======================== -->
+        <div class="chart-section">
+            <div class="chart-title">📊 نمودار مقایسه‌ای پیشرفت دروس</div>
+            <div class="chart-wrapper" id="chartWrapper">
+                <div style="text-align:center; color:var(--text-secondary); width:100%; padding-top:60px;">
+                    📉 با افزودن دروس، نمودار نمایش داده می‌شود
+                </div>
+            </div>
+        </div>
+
+        <!-- ======================== -->
+        <!-- NOTES - یادداشت مشاور -->
+        <!-- ======================== -->
+        <div class="notes-section">
+            <div class="notes-title">📝 یادداشت برای مشاور</div>
+            <textarea class="notes-textarea" id="notesArea" placeholder="اینجا می‌تونی یادداشت، سؤال یا توضیحاتی برای مشاورت بنویسی...&#10;&#10;مثلاً:&#10;- این هفته فیزیک سخت بود&#10;- ریاضی عالی پیش رفت&#10;- نیاز به جلسه مشاوره دارم"></textarea>
+        </div>
+
+        <!-- ======================== -->
+        <!-- GOAL - هدف هفتگی -->
+        <!-- ======================== -->
+        <div class="goal-section">
+            <div class="goal-icon">🎯</div>
+            <div class="goal-content">
+                <h3>هدف این هفته</h3>
+                <input type="text" class="goal-input" id="weeklyGoal" placeholder="مثلاً: تموم کردن فصل ۵ ریاضی و تست‌زنی فیزیک..." />
+            </div>
+        </div>
+
+        <!-- واترمارک -->
+        <div class="watermark">
+            ساخته شده با ❤️ برای موفقیت تحصیلی | داشبورد پیشروی دروس V1.3.0
+        </div>
+
+        <!-- ======================== -->
+        <!-- EXPORT BUTTONS - (مخفی در PNG) -->
+        <!-- ======================== -->
+        <div class="export-section no-capture-toggle">
+            <button class="btn-export" onclick="exportToPNG()">
+                📸 خروجی PNG برای مشاور
+            </button>
+            <button class="btn-reset" onclick="resetAll()">
+                🗑️ پاک کردن همه
+            </button>
+        </div>
+    </div>
+
+    <!-- ======================== -->
+    <!-- EDIT MODAL - پنجره ویرایش -->
+    <!-- ======================== -->
+    <div class="modal-overlay" id="editModal">
+        <div class="modal">
+            <h2>✏️ ویرایش درس</h2>
+            <input type="hidden" id="editIndex" />
+            <div class="form-group">
+                <label>📖 نام درس</label>
+                <input type="text" id="editLessonName" />
+            </div>
+            <div class="form-group">
+                <label>📂 دسته‌بندی</label>
+                <select id="editLessonCategory">
+                    <option value="general">عمومی</option>
+                    <option value="specific">اختصاصی</option>
+                    <option value="optional">انتخابی</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>📊 پیشرفت (%)</label>
+                <input type="number" id="editLessonProgress" min="0" max="100" />
+            </div>
+            <div class="form-group">
+                <label>📄 کل صفحات</label>
+                <input type="number" id="editLessonTotal" min="0" />
+            </div>
+            <div class="form-group">
+                <label>✅ خوانده شده</label>
+                <input type="number" id="editLessonDone" min="0" />
+            </div>
+            <div class="form-group">
+                <label>⏱️ ساعت مطالعه</label>
+                <input type="number" id="editLessonHours" min="0" step="0.5" />
+            </div>
+            <div class="modal-buttons">
+                <button class="btn-save" onclick="saveEdit()">💾 ذخیره</button>
+                <button class="btn-cancel" onclick="closeModal()">❌ انصراف</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION -->
+    <div class="toast" id="toast"></div>
+
+    <!-- کتابخانه خروجی تصویر -->
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+
+    <script>
+        // =====================================================
+        //  🧠 APPLICATION STATE & CONFIGURATION
+        //  مدیریت وضعیت و تنظیمات اولیه برنامه
+        // =====================================================
+
+        const STORAGE_KEY = "progress_dashboard_v1_2_4";
+
+        // پالت رنگ‌های نوار پیشرفت
+        const COLORS = [
+            "fill-pink", "fill-blue", "fill-green", "fill-purple",
+            "fill-orange", "fill-mint", "fill-lavender", "fill-yellow"
+        ];
+
+        // کلاس‌های رنگی کارت‌ها
+        const CARD_COLORS = [
+            "color-pink", "color-blue", "color-green", "color-purple",
+            "color-orange", "color-mint", "color-lavender", "color-yellow"
+        ];
+
+        // آرایه اصلی دروس
+        let lessons = [];
+
+        // ثابت محیط دایره SVG (۲ × π × r = 2 × 3.14159 × 50)
+        const CIRCLE_CIRCUMFERENCE = 314.16;
+
+        // =====================================================
+        //  🛠️ UTILITY FUNCTIONS - توابع کمکی
+        // =====================================================
+
+        /** دسترسی سریع به المان‌ها */
+        const $ = id => document.getElementById(id);
+
+        /** محدود کردن عدد در بازه */
+        const clamp = (val, min, max) => Math.min(Math.max(val, min), max);
+
+        /** نمایش تاریخ شمسی امروز */
+        function setTodayDate() {
+            try {
+                const today = new Date();
+                const formatter = new Intl.DateTimeFormat('fa-IR', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    weekday: 'long'
+                });
+                $("currentDate").textContent = `📅 ${formatter.format(today)}`;
+            } catch (e) {
+                $("currentDate").textContent = `📅 ${new Date().toLocaleDateString('fa-IR')}`;
+            }
+        }
+
+        // =====================================================
+        //  📦 LOCAL STORAGE - ذخیره و بازیابی اطلاعات
+        // =====================================================
+
+        /** ذخیره کل وضعیت در localStorage */
+        function saveToStorage() {
+            const data = {
+                lessons: lessons,
+                studentName: $("studentName").value,
+                notes: $("notesArea").value,
+                weeklyGoal: $("weeklyGoal").value
+            };
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        }
+
+        /** بازیابی داده‌ها از localStorage */
+        function loadFromStorage() {
+            try {
+                const raw = localStorage.getItem(STORAGE_KEY);
+                if (!raw) return;
+
+                const data = JSON.parse(raw);
+                lessons = data.lessons || [];
+                $("studentName").value = data.studentName || "";
+                $("notesArea").value = data.notes || "";
+                $("weeklyGoal").value = data.weeklyGoal || "";
+            } catch (e) {
+                console.warn("خطا در بازیابی داده‌ها:", e);
+            }
+        }
+
+        // =====================================================
+        //  🔔 TOAST - نوتیفیکیشن کوتاه
+        // =====================================================
+
+        function showToast(message, type = "success") {
+            const toast = $("toast");
+            toast.textContent = message;
+            toast.className = `toast ${type} show`;
+
+            setTimeout(() => {
+                toast.classList.remove("show");
+            }, 2800);
+        }
+
+        // =====================================================
+        //  ➕ ADD LESSON - افزودن درس جدید
+        // =====================================================
+
+        function addLesson() {
+            const name = $("lessonName").value.trim();
+            if (!name) {
+                showToast("⚠️ لطفاً نام درس را وارد کنید!", "error");
+                $("lessonName").focus();
+                return;
+            }
+
+            const lesson = {
+                name: name,
+                category: $("lessonCategory").value,
+                progress: clamp(parseInt($("lessonProgress").value) || 0, 0, 100),
+                total: Math.max(parseInt($("lessonTotal").value) || 0, 0),
+                done: Math.max(parseInt($("lessonDone").value) || 0, 0),
+                hours: Math.max(parseFloat($("lessonHours").value) || 0, 0)
+            };
+
+            // اطمینان از عدم تجاوز صفحات خوانده‌شده از کل
+            if (lesson.total > 0 && lesson.done > lesson.total) {
+                lesson.done = lesson.total;
+            }
+
+            lessons.push(lesson);
+            saveToStorage();
+            renderLessons();
+
+            // پاک‌سازی فرم
+            $("lessonName").value = "";
+            $("lessonProgress").value = "";
+            $("lessonTotal").value = "";
+            $("lessonDone").value = "";
+            $("lessonHours").value = "";
+
+            showToast(`✅ درس «${name}» اضافه شد!`);
+        }
+
+        // =====================================================
+        //  🗑️ DELETE LESSON - حذف درس
+        // =====================================================
+
+        function deleteLesson(index) {
+            const name = lessons[index]?.name || "درس";
+            if (!confirm(`آیا از حذف «${name}» مطمئنی؟`)) return;
+
+            lessons.splice(index, 1);
+            saveToStorage();
+            renderLessons();
+            showToast(`🗑️ درس «${name}» حذف شد`, "info");
+        }
+
+        // =====================================================
+        //  ✏️ EDIT MODAL - ویرایش درس
+        // =====================================================
+
+        function openEdit(index) {
+            const lesson = lessons[index];
+            if (!lesson) return;
+
+            $("editIndex").value = index;
+            $("editLessonName").value = lesson.name;
+            $("editLessonCategory").value = lesson.category;
+            $("editLessonProgress").value = lesson.progress;
+            $("editLessonTotal").value = lesson.total;
+            $("editLessonDone").value = lesson.done;
+            $("editLessonHours").value = lesson.hours;
+
+            $("editModal").classList.add("active");
+        }
+
+        function closeModal() {
+            $("editModal").classList.remove("active");
+        }
+
+        function saveEdit() {
+            const index = parseInt($("editIndex").value);
+            if (isNaN(index) || !lessons[index]) return;
+
+            lessons[index] = {
+                name: $("editLessonName").value.trim() || lessons[index].name,
+                category: $("editLessonCategory").value,
+                progress: clamp(parseInt($("editLessonProgress").value) || 0, 0, 100),
+                total: Math.max(parseInt($("editLessonTotal").value) || 0, 0),
+                done: Math.max(parseInt($("editLessonDone").value) || 0, 0),
+                hours: Math.max(parseFloat($("editLessonHours").value) || 0, 0)
+            };
+
+            // ولیدیشن صفحات
+            if (lessons[index].total > 0 && lessons[index].done > lessons[index].total) {
+                lessons[index].done = lessons[index].total;
+            }
+
+            closeModal();
+            saveToStorage();
+            renderLessons();
+            showToast(`💾 تغییرات ذخیره شد!`);
+        }
+
+        // =====================================================
+        //  🖱️ DRAG & DROP - مرتب‌سازی با کشیدن
+        // =====================================================
+
+        let dragIndex = null;
+
+        function handleDragStart(e) {
+            dragIndex = +this.dataset.index;
+            this.classList.add("dragging");
+            e.dataTransfer.effectAllowed = "move";
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = "move";
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            const dropIndex = +this.dataset.index;
+            if (dragIndex === null || dragIndex === dropIndex) return;
+
+            // جابجایی آرایه
+            const [moved] = lessons.splice(dragIndex, 1);
+            lessons.splice(dropIndex, 0, moved);
+
+            dragIndex = null;
+            saveToStorage();
+            renderLessons();
+        }
+
+        function handleDragEnd() {
+            this.classList.remove("dragging");
+            dragIndex = null;
+        }
+
+        // =====================================================
+        //  🎨 RENDER LESSONS - رندر لیست دروس
+        // =====================================================
+
+        function renderLessons() {
+            const grid = $("lessonsGrid");
+            grid.innerHTML = "";
+
+            if (lessons.length === 0) {
+                grid.innerHTML = `
+                    <div class="empty-state" id="emptyState">
+                        <div class="empty-state-icon">📭</div>
+                        <p>هنوز درسی اضافه نکردی!<br/>از فرم بالا شروع کن 😊</p>
+                    </div>`;
+                updateStats();
+                updateOverallProgress();
+                updateChart();
+                return;
+            }
+
+            // نقشه دسته‌بندی برای نمایش فارسی
+            const catMap = {
+                general: { label: "عمومی", cls: "badge-general" },
+                specific: { label: "اختصاصی", cls: "badge-specific" },
+                optional: { label: "انتخابی", cls: "badge-optional" }
+            };
+
+            lessons.forEach((lesson, index) => {
+                const progress = clamp(lesson.progress || 0, 0, 100);
+                const fillClass = COLORS[index % COLORS.length];
+                const colorClass = CARD_COLORS[index % CARD_COLORS.length];
+                const cat = catMap[lesson.category] || catMap.general;
+
+                const card = document.createElement("div");
+                card.className = `lesson-card ${colorClass}`;
+                card.draggable = true;
+                card.dataset.index = index;
+
+                card.innerHTML = `
+                    <div class="lesson-header">
+                        <span class="lesson-name">${lesson.name}</span>
+                        <span class="lesson-badge ${cat.cls}">${cat.label}</span>
+                    </div>
+
+                    <div class="progress-section">
+                        <div class="progress-info">
+                            <span>پیشرفت</span>
+                            <span>${progress}%</span>
+                        </div>
+                        <div class="progress-bar-bg">
+                            <div class="progress-bar-fill ${fillClass}" style="width:${progress}%"></div>
+                        </div>
+                    </div>
+
+                    <div class="lesson-details">
+                        <span>صفحات: ${lesson.done}/${lesson.total}</span>
+                        <span>⏱️ ${lesson.hours} ساعت</span>
+                    </div>
+
+                    <div class="lesson-actions no-capture-toggle">
+                        <button class="btn-action btn-edit" onclick="openEdit(${index})">✏️ ویرایش</button>
+                        <button class="btn-action btn-delete" onclick="deleteLesson(${index})">🗑️ حذف</button>
+                    </div>
+                `;
+
+                // رویدادهای Drag & Drop
+                card.addEventListener("dragstart", handleDragStart);
+                card.addEventListener("dragover", handleDragOver);
+                card.addEventListener("drop", handleDrop);
+                card.addEventListener("dragend", handleDragEnd);
+
+                grid.appendChild(card);
+            });
+
+            updateStats();
+            updateOverallProgress();
+            updateChart();
+        }
+
+        // =====================================================
+        //  📊 UPDATE STATS - به‌روزرسانی آمار کلی
+        // =====================================================
+
+        function updateStats() {
+            // تعداد کل دروس
+            $("totalLessons").textContent = lessons.length;
+
+            // میانگین پیشرفت درصدی
+            const avg = lessons.length
+                ? Math.round(lessons.reduce((sum, l) => sum + (l.progress || 0), 0) / lessons.length)
+                : 0;
+            $("avgProgress").textContent = `${avg}%`;
+
+            // تعداد دروس تکمیل شده (100%)
+            const completed = lessons.filter(l => (l.progress || 0) >= 100).length;
+            $("completedLessons").textContent = completed;
+
+            // مجموع ساعات مطالعه
+            const totalHours = lessons.reduce((sum, l) => sum + (parseFloat(l.hours) || 0), 0);
+            $("totalHours").textContent = totalHours.toFixed(1);
+        }
+
+        // =====================================================
+        //  🏆 UPDATE OVERALL PROGRESS - پیشرفت کل بر مبنای صفحات
+        //  فرمول: (مجموع صفحات خوانده‌شده / مجموع کل صفحات) × 100
+        // =====================================================
+
+        function updateOverallProgress() {
+            // محاسبه مجموع صفحات
+            const totalPages = lessons.reduce((sum, l) => sum + (parseInt(l.total) || 0), 0);
+            const donePages = lessons.reduce((sum, l) => sum + (parseInt(l.done) || 0), 0);
+            const remaining = Math.max(totalPages - donePages, 0);
+
+            // درصد کل
+            const percent = totalPages > 0 ? Math.round((donePages / totalPages) * 100) : 0;
+
+            // به‌روزرسانی اعداد
+            $("overallTotalPages").textContent = totalPages.toLocaleString('fa-IR');
+            $("overallDonePages").textContent = donePages.toLocaleString('fa-IR');
+            $("overallRemaining").textContent = remaining.toLocaleString('fa-IR');
+            $("overallPercent").textContent = `${percent}%`;
+
+            // به‌روزرسانی نوار خطی
+            $("overallBar").style.width = `${percent}%`;
+
+            // به‌روزرسانی دایره SVG
+            // محیط دایره = ۳۱۴.۱۶ | offset = circumference × (1 - percent/100)
+            const offset = CIRCLE_CIRCUMFERENCE * (1 - percent / 100);
+            $("overallCircle").style.strokeDashoffset = offset;
+        }
+
+        // =====================================================
+        //  📉 UPDATE CHART - نمودار میله‌ای مقایسه‌ای
+        // =====================================================
+
+        function updateChart() {
+            const wrapper = $("chartWrapper");
+            wrapper.innerHTML = "";
+
+            if (lessons.length === 0) {
+                wrapper.innerHTML = `
+                    <div style="text-align:center; color:var(--text-secondary); width:100%; padding-top:60px;">
+                        📉 با افزودن دروس، نمودار نمایش داده می‌شود
+                    </div>`;
+                return;
+            }
+
+            lessons.forEach((lesson, index) => {
+                const progress = clamp(lesson.progress || 0, 0, 100);
+                const fillClass = COLORS[index % COLORS.length];
+
+                const barWrapper = document.createElement("div");
+                barWrapper.className = "chart-bar-wrapper";
+
+                barWrapper.innerHTML = `
+                    <div class="chart-bar ${fillClass}" style="height:${progress * 2}px;">
+                        <div class="chart-bar-value">${progress}%</div>
+                    </div>
+                    <div class="chart-bar-label">${lesson.name}</div>
+                `;
+
+                wrapper.appendChild(barWrapper);
+            });
+        }
+
+        // =====================================================
+        //  📸 EXPORT TO PNG - خروجی تصویر
+        //  المان‌های no-capture-toggle قبل از عکس مخفی می‌شوند
+        // =====================================================
+
+        function exportToPNG() {
+            // مخفی کردن المان‌های غیرضروری
+            const hiddenElements = document.querySelectorAll('.no-capture-toggle');
+            hiddenElements.forEach(el => el.style.display = 'none');
+
+            // یک فریم صبر می‌کنیم تا DOM آپدیت بشه
+            requestAnimationFrame(() => {
+                const dashboard = $("dashboard");
+
+                html2canvas(dashboard, {
+                    scale: 2,
+                    useCORS: true,
+                    backgroundColor: '#f5f0eb',
+                    logging: false,
+                    allowTaint: true
+                }).then(canvas => {
+                    // ساخت لینک دانلود
+                    const link = document.createElement("a");
+                    const studentName = $("studentName").value.trim() || "دانش‌آموز";
+                    const today = new Date().toLocaleDateString('fa-IR');
+
+                    link.download = `گزارش_${studentName}_${today}.png`;
+                    link.href = canvas.toDataURL("image/png", 1.0);
+                    link.click();
+
+                    showToast("📸 خروجی PNG آماده شد!", "success");
+                }).catch(err => {
+                    console.error("خطا در تولید تصویر:", err);
+                    showToast("⚠️ خطا در تولید تصویر!", "error");
+                }).finally(() => {
+                    // بازگرداندن المان‌های مخفی‌شده
+                    hiddenElements.forEach(el => el.style.display = '');
+                });
+            });
+        }
+
+        // =====================================================
+        //  🗑️ RESET ALL - پاک‌سازی کامل
+        // =====================================================
+
+        function resetAll() {
+            if (!confirm("⚠️ آیا از پاک کردن همه داده‌ها مطمئنی؟ این عمل قابل بازگشت نیست!")) return;
+
+            lessons = [];
+            $("studentName").value = "";
+            $("notesArea").value = "";
+            $("weeklyGoal").value = "";
+
+            localStorage.removeItem(STORAGE_KEY);
+            renderLessons();
+            showToast("🗑️ همه داده‌ها پاک شد!", "info");
+        }
+
+        // =====================================================
+        //  🔄 AUTO-SAVE - ذخیره خودکار فیلدها
+        // =====================================================
+
+        ["studentName", "notesArea", "weeklyGoal"].forEach(id => {
+            $(id).addEventListener("input", () => saveToStorage());
+        });
+
+        // =====================================================
+        //  🚀 INITIALIZATION - راه‌اندازی اولیه
+        // =====================================================
+
+        (function init() {
+            setTodayDate();
+            loadFromStorage();
+            renderLessons();
+        })();
+    </script>
+</body>
+</html>
