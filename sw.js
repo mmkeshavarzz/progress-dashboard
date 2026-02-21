@@ -1,9 +1,9 @@
 // ============================================
 // 🛠️ Service Worker - داشبورد پیشروی دروس
-// نسخه: 1.3.0
+// نسخه  1.4.1
 // ============================================
 
-const CACHE_NAME = 'dashboard-pishroft-v1.3.0';
+const CACHE_NAME = 'dashboard-pishroft-v1.4.1';
 const DYNAMIC_CACHE = 'dashboard-dynamic-v1.3.0';
 
 // 📦 فایل‌هایی که باید کش بشن (App Shell)
@@ -290,3 +290,4 @@ self.addEventListener('message', (event) => {
 });
 
 console.log('📊 [SW] Service Worker داشبورد پیشروی دروس بارگذاری شد! 🎓');
+
