@@ -1172,15 +1172,16 @@
             </div>
             <div class="form-group" style="flex:0.7; min-width:100px;">
                 <label>📊 پیشرفت (%)</label>
-                <input type="number" id="lessonProgress" min="0" max="100" placeholder="0" />
+                <input type="number" id="lessonProgress" min="0" max="100" placeholder="خودکار" readonly 
+                       style="background: #e8f5e9; color: #2e7d32; font-weight: bold; cursor: not-allowed;" />
             </div>
             <div class="form-group" style="flex:0.7; min-width:100px;">
                 <label>📄 کل صفحات</label>
-                <input type="number" id="lessonTotal" min="0" placeholder="100" />
+                <input type="number" id="lessonTotal" min="0" placeholder="100" oninput="autoCalcProgress()" />
             </div>
             <div class="form-group" style="flex:0.7; min-width:100px;">
                 <label>✅ خوانده شده</label>
-                <input type="number" id="lessonDone" min="0" placeholder="0" />
+                <input type="number" id="lessonDone" min="0" placeholder="0" oninput="autoCalcProgress()" />
             </div>
             <div class="form-group" style="flex:0.7; min-width:100px;">
                 <label>⏱️ ساعت مطالعه</label>
@@ -1395,6 +1396,26 @@
                 toast.classList.remove("show");
             }, 2800);
         }
+
+        // =====================================================
+        //  🔄 AUTO PROGRESS - محاسبه خودکار درصد پیشرفت
+        // =====================================================
+        
+        function autoCalcProgress() {
+            const total = Math.max(parseInt($("lessonTotal").value) || 0, 0);
+            const done = Math.max(parseInt($("lessonDone").value) || 0, 0);
+            
+            if (total > 0) {
+                // محاسبه درصد و گرد کردن
+                let percent = Math.round((done / total) * 100);
+                // مطمئن شو از ۱۰۰ بیشتر نشه
+                percent = Math.min(percent, 100);
+                $("lessonProgress").value = percent;
+            } else {
+                $("lessonProgress").value = "";
+            }
+        }
+
 
         // =====================================================
         //  ➕ ADD LESSON - افزودن درس جدید
