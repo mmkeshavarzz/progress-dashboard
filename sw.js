@@ -1,13 +1,13 @@
 /*
  * ============================================
  *  Service Worker - داشبورد پیشروی دروس
- *  Version: 1.4.1
+ *  Version: 1.4.2
  *  Strategy: Cache First + Network Fallback
  * ============================================
  */
 
 // -- نام کش و نسخه (هر بار آپدیت کردی، ورژن رو عوض کن) --
-const CACHE_NAME = 'dashboard-doross-v1.4.1';
+const CACHE_NAME = 'dashboard-doross-v1.4.2';
 
 // -- لیست فایل‌هایی که باید کش بشن --
 const ASSETS_TO_CACHE = [
@@ -182,4 +182,5 @@ self.addEventListener('fetch', (event) => {
       })
   );
 });
+
 
