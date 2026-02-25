@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>📊 داشبورد پیشروی دروس - V 1.3.0</title>
+    <title>📊 داشبورد پیشروی دروس - V 1.4.1</title>
 
         <!-- ========== PWA Meta Tags ========== -->
     <link rel="manifest" href="manifest.json">
@@ -1236,7 +1236,7 @@
 
         <!-- واترمارک -->
         <div class="watermark">
-            ساخته شده با ❤️ برای موفقیت تحصیلی | داشبورد پیشروی دروس V1.3.0
+            ساخته شده با ❤️ برای موفقیت تحصیلی | داشبورد پیشروی دروس V1.4.1
         </div>
 
         <!-- ======================== -->
@@ -1273,15 +1273,17 @@
             </div>
             <div class="form-group">
                 <label>📊 پیشرفت (%)</label>
-                <input type="number" id="editLessonProgress" min="0" max="100" />
+                <input type="number" id="editLessonProgress" min="0" max="100" placeholder="خودکار" readonly
+                       style="background: #e8f5e9; color: #2e7d32; font-weight: bold; cursor: not-allowed;" />
+
             </div>
             <div class="form-group">
                 <label>📄 کل صفحات</label>
-                <input type="number" id="editLessonTotal" min="0" />
+                <input type="number" id="editLessonTotal" min="0" oninput="autoCalcEditProgress()" />
             </div>
             <div class="form-group">
                 <label>✅ خوانده شده</label>
-                <input type="number" id="editLessonDone" min="0" />
+                <input type="number" id="editLessonDone" min="0" oninput="autoCalcEditProgress()" />
             </div>
             <div class="form-group">
                 <label>⏱️ ساعت مطالعه</label>
@@ -1416,6 +1418,23 @@
             }
         }
 
+        // =====================================================
+        //  🔄 AUTO EDIT PROGRESS - محاسبه خودکار درصد در ویرایش
+        // =====================================================
+        
+        function autoCalcEditProgress() {
+            const total = Math.max(parseInt($("editLessonTotal").value) || 0, 0);
+            const done = Math.max(parseInt($("editLessonDone").value) || 0, 0);
+        
+            if (total > 0) {
+                let percent = Math.round((done / total) * 100);
+                percent = Math.min(percent, 100);
+                $("editLessonProgress").value = percent;
+            } else {
+                $("editLessonProgress").value = "";
+            }
+        }
+
 
         // =====================================================
         //  ➕ ADD LESSON - افزودن درس جدید
@@ -1478,17 +1497,21 @@
         function openEdit(index) {
             const lesson = lessons[index];
             if (!lesson) return;
-
+        
             $("editIndex").value = index;
             $("editLessonName").value = lesson.name;
             $("editLessonCategory").value = lesson.category;
-            $("editLessonProgress").value = lesson.progress;
+            // ❌ حذف شد: $("editLessonProgress").value = lesson.progress;
             $("editLessonTotal").value = lesson.total;
             $("editLessonDone").value = lesson.done;
             $("editLessonHours").value = lesson.hours;
-
+        
+            // ✅ محاسبه خودکار درصد پیشرفت
+            autoCalcEditProgress();
+        
             $("editModal").classList.add("active");
         }
+
 
         function closeModal() {
             $("editModal").classList.remove("active");
@@ -1497,26 +1520,32 @@
         function saveEdit() {
             const index = parseInt($("editIndex").value);
             if (isNaN(index) || !lessons[index]) return;
-
+        
+            const total = Math.max(parseInt($("editLessonTotal").value) || 0, 0);
+            const done = Math.max(parseInt($("editLessonDone").value) || 0, 0);
+        
             lessons[index] = {
                 name: $("editLessonName").value.trim() || lessons[index].name,
                 category: $("editLessonCategory").value,
-                progress: clamp(parseInt($("editLessonProgress").value) || 0, 0, 100),
-                total: Math.max(parseInt($("editLessonTotal").value) || 0, 0),
-                done: Math.max(parseInt($("editLessonDone").value) || 0, 0),
+                // ✅ محاسبه خودکار درصد از روی صفحات
+                progress: total > 0 ? Math.min(Math.round((done / total) * 100), 100) : 0,
+                total: total,
+                done: done,
                 hours: Math.max(parseFloat($("editLessonHours").value) || 0, 0)
             };
-
+        
             // ولیدیشن صفحات
             if (lessons[index].total > 0 && lessons[index].done > lessons[index].total) {
                 lessons[index].done = lessons[index].total;
+                lessons[index].progress = 100;
             }
-
+        
             closeModal();
             saveToStorage();
             renderLessons();
             showToast(`💾 تغییرات ذخیره شد!`);
         }
+
 
         // =====================================================
         //  🖱️ DRAG & DROP - مرتب‌سازی با کشیدن
