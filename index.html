@@ -1751,44 +1751,72 @@
         // =====================================================
         //  📸 EXPORT TO PNG - خروجی تصویر
         //  المان‌های no-capture-toggle قبل از عکس مخفی می‌شوند
+        // خروجی تصویر با عرض ثابت
         // =====================================================
 
         function exportToPNG() {
             // مخفی کردن المان‌های غیرضروری
             const hiddenElements = document.querySelectorAll('.no-capture-toggle');
             hiddenElements.forEach(el => el.style.display = 'none');
-
+        
             // یک فریم صبر می‌کنیم تا DOM آپدیت بشه
             requestAnimationFrame(() => {
                 const dashboard = $("dashboard");
-
-                html2canvas(dashboard, {
-                    scale: 2,
-                    useCORS: true,
-                    backgroundColor: '#f5f0eb',
-                    logging: false,
-                    allowTaint: true
-                }).then(canvas => {
-                    // ساخت لینک دانلود
-                    const link = document.createElement("a");
-                    const studentName = $("studentName").value.trim() || "دانش‌آموز";
-                    const today = new Date().toLocaleDateString('fa-IR');
-
-                    link.download = `گزارش_${studentName}_${today}.png`;
-                    link.href = canvas.toDataURL("image/png", 1.0);
-                    link.click();
-
-                    showToast("📸 خروجی PNG آماده شد!", "success");
-                }).catch(err => {
-                    console.error("خطا در تولید تصویر:", err);
-                    showToast("⚠️ خطا در تولید تصویر!", "error");
-                }).finally(() => {
-                    // بازگرداندن المان‌های مخفی‌شده
-                    hiddenElements.forEach(el => el.style.display = '');
-                });
+                
+                // 📐 ذخیره استایل اصلی داشبورد
+                const originalStyle = dashboard.getAttribute('style') || '';
+                const originalWidth = dashboard.style.width;
+                const originalMinWidth = dashboard.style.minWidth;
+                const originalMaxWidth = dashboard.style.maxWidth;
+                
+                // 🖥️ تنظیم عرض ثابت دسکتاپی برای رندر
+                const DESKTOP_WIDTH = 1200; // پیکسل - عرض استاندارد دسکتاپ
+                
+                dashboard.style.width = DESKTOP_WIDTH + 'px';
+                dashboard.style.minWidth = DESKTOP_WIDTH + 'px';
+                dashboard.style.maxWidth = DESKTOP_WIDTH + 'px';
+                
+                // ⏳ صبر برای اعمال استایل جدید
+                setTimeout(() => {
+                    html2canvas(dashboard, {
+                        scale: 2,                          // کیفیت بالا
+                        useCORS: true,                     // پشتیبانی از منابع خارجی
+                        backgroundColor: '#f5f0eb',        // پس‌زمینه صدفی
+                        logging: false,                    // بدون لاگ
+                        allowTaint: true,                  // اجازه taint
+                        width: DESKTOP_WIDTH,              // ✅ عرض ثابت
+                        windowWidth: DESKTOP_WIDTH,        // ✅ شبیه‌سازی پنجره دسکتاپ
+                        scrollX: 0,                        // بدون اسکرول افقی
+                        scrollY: -window.scrollY           // حفظ موقعیت اسکرول
+                    }).then(canvas => {
+                        // ساخت لینک دانلود
+                        const link = document.createElement("a");
+                        const studentName = $("studentName").value.trim() || "دانش‌آموز";
+                        const today = new Date().toLocaleDateString('fa-IR');
+        
+                        link.download = `گزارش_${studentName}_${today}.png`;
+                        link.href = canvas.toDataURL("image/png", 1.0);
+                        link.click();
+        
+                        showToast("📸 خروجی PNG آماده شد!", "success");
+                    }).catch(err => {
+                        console.error("خطا در تولید تصویر:", err);
+                        showToast("⚠️ خطا در تولید تصویر!", "error");
+                    }).finally(() => {
+                        // 🔄 بازگرداندن استایل اصلی داشبورد
+                        dashboard.style.width = originalWidth;
+                        dashboard.style.minWidth = originalMinWidth;
+                        dashboard.style.maxWidth = originalMaxWidth;
+                        if (originalStyle) {
+                            dashboard.setAttribute('style', originalStyle);
+                        }
+                        
+                        // بازگرداندن المان‌های مخفی‌شده
+                        hiddenElements.forEach(el => el.style.display = '');
+                    });
+                }, 100); // 100ms تأخیر برای اعمال استایل
             });
         }
-
         // =====================================================
         //  🗑️ RESET ALL - پاک‌سازی کامل
         // =====================================================
